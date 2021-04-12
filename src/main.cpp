@@ -46,6 +46,7 @@ int main()
 		data.reserve(imageSize * 2);
 
 		int count = 0;
+		int num = 0;
 		TinyProcessLib::Process process1("ffmpeg -i input.mp4 -c:v bmp -f rawvideo pipe:1", "", [&](const char* bytes, size_t n) {
 			const auto offset = data.size();
 			data.resize(offset + n);
@@ -53,12 +54,12 @@ int main()
 
 			if (data.size() >= imageSize)
 			{
-				int x = 0;
-				int y = 0;
-				int comp = 0;
-				auto p = stbi_load_from_memory((stbi_uc const*)data.data(), imageSize, &x, &y, &comp, 3);
+				
+				auto dst = "img_" + std::to_string(num) + ".png";
 
-				stbi_image_free(p);
+				// TODO swap b and r
+				stbi_write_png(dst.data(), width, height, 3, data.data() + 54, width * 3);
+				num++;
 
 				data.erase(data.begin(), data.begin() + imageSize);
 			}
